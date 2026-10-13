@@ -12,14 +12,14 @@
 #
 # Setting it up in the ESPHome Device Builder add-on:
 #   1. New device -> name it -> ESP32-S3. The wizard writes api: (encryption key),
-#      ota: and wifi: blocks for you.
-#   2. Replace everything ABOVE those blocks with the substitutions: and packages:
-#      sections below, and add the micro_wake_word: section. Keep the wizard's
-#      api:, ota: and wifi: blocks.
+#      ota: and wifi: blocks for you - keep those three.
+#   2. Delete the wizard's esphome:, esp32: and logger: blocks (the package sets
+#      them), then paste substitutions:, packages: and micro_wake_word: from here.
+#   3. Set name: below to the name you gave the device in the wizard.
 
 substitutions:
-  name: respeaker-xvf3800
-  friendly_name: reSpeaker XVF3800
+  name: respeakeresp
+  friendly_name: respeakeresp
 
   # Pinned so a change upstream can't break the next build. To update, set a newer
   # commit or tag from the repo above.
