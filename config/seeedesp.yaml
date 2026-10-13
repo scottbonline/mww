@@ -12,6 +12,8 @@ substitutions:
   # DEBUG shows wake word detections (with confidence) and the ones the VAD blocked.
   # Back to INFO for quieter logs.
   log_level: DEBUG
+  # Give up listening if no speech starts within this long (includes the wake sound).
+  no_speech_timeout: 5s
   wake_word_triggered_sound_file: https://raw.githubusercontent.com/scottbonline/mww/main/sounds/wake_yes.flac
 
 packages:
@@ -37,6 +39,31 @@ micro_wake_word:
 logger:
   logs:
     micro_wake_word: DEBUG
+
+# Stop listening if no speech starts within ${no_speech_timeout} of listening (HA alone
+# waits ~15s). The package's own voice_assistant/script lists are kept: ESPHome
+# appends these to them.
+voice_assistant:
+  on_listening:
+    - script.execute: no_speech_timeout
+  on_stt_vad_start:
+    - script.stop: no_speech_timeout
+  on_end:
+    - script.stop: no_speech_timeout
+
+script:
+  - id: no_speech_timeout
+    mode: restart
+    then:
+      - delay: ${no_speech_timeout}
+      - if:
+          condition:
+            lambda: return id(voice_assistant_phase) == ${voice_assist_waiting_for_command_phase_id};
+          then:
+            - logger.log:
+                level: INFO
+                format: "No speech within ${no_speech_timeout} - stopping"
+            - voice_assistant.stop:
 
 
 api:
