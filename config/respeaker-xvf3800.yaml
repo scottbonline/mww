@@ -24,6 +24,9 @@ substitutions:
   # Pinned so a change upstream can't break the next build. To update, set a newer
   # commit or tag from the repo above.
   respeaker_ref: 542a05d44b6eb2c646a6ba0acd3e0cf2e6edcfab
+  # DEBUG shows wake word detections (with confidence) and the ones the VAD blocked.
+  # Back to INFO for quieter logs.
+  log_level: DEBUG
 
   # Beep, then "Yes?" (played by the package's wake-sound logic).
   wake_word_triggered_sound_file: https://raw.githubusercontent.com/scottbonline/mww/main/sounds/wake_yes.flac
@@ -46,6 +49,14 @@ micro_wake_word:
   models:
     - model: https://raw.githubusercontent.com/scottbonline/mww/refs/heads/main/data/hey_klap.json
       id: hey_klap
+    - model: alexa
+      id: alexa
+
+# Needs log_level: DEBUG above (the package sets micro_wake_word to INFO).
+logger:
+  logs:
+    micro_wake_word: DEBUG
+
 
 # --- From the Device Builder wizard (keep yours) ---
 # api:

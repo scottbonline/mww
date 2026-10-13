@@ -1,0 +1,55 @@
+# The reSpeaker XVF3800 as built and flashed from the Mac (see respeaker-xvf3800.yaml
+# for what it is). Secrets come from config/secrets.yaml (gitignored). Use the same
+# api/ota values as the device in HA's ESPHome Builder, so wireless updates from
+# either place keep working.
+#
+#   esphome run config/seeedesp.yaml --device /dev/cu.usbmodem2101
+
+substitutions:
+  name: seeedesp
+  friendly_name: seeedesp
+  respeaker_ref: 542a05d44b6eb2c646a6ba0acd3e0cf2e6edcfab
+  # DEBUG shows wake word detections (with confidence) and the ones the VAD blocked.
+  # Back to INFO for quieter logs.
+  log_level: DEBUG
+  wake_word_triggered_sound_file: https://raw.githubusercontent.com/scottbonline/mww/main/sounds/wake_yes.flac
+
+packages:
+  respeaker:
+    url: https://github.com/formatBCE/Respeaker-XVF3800-ESPHome-integration
+    ref: ${respeaker_ref}
+    refresh: 1d
+    files:
+      - packages/base.yaml
+      - packages/hardware.yaml
+      - packages/voice-assistant.yaml
+      - packages/leds.yaml
+      - packages/timers-alarm.yaml
+
+micro_wake_word:
+  models:
+    - model: https://raw.githubusercontent.com/scottbonline/mww/refs/heads/main/data/hey_klap.json
+      id: hey_klap
+    - model: alexa
+      id: alexa
+
+# Needs log_level: DEBUG above (the package sets micro_wake_word to INFO).
+logger:
+  logs:
+    micro_wake_word: DEBUG
+
+
+api:
+  encryption:
+    key: !secret seeedesp_api_key
+
+ota:
+  - platform: esphome
+    password: !secret seeedesp_ota_password
+
+wifi:
+  ssid: !secret wifi_ssid
+  password: !secret wifi_password
+  ap:
+    ssid: "Seeedesp Fallback Hotspot"
+    password: !secret seeedesp_ap_password
