@@ -1,0 +1,44 @@
+# The Satellite1 (d03d6c) on FutureProofHomes' current firmware, plus the hey_klap and
+# alexa wake words. Built and sent from the Mac:
+#
+#   esphome run config/satellite1-d03d6c.yaml --device satellite1-d03d6c.local
+#
+# Based on upstream's config/satellite1.dashboard.yaml. Pinned to a commit so a rebuild
+# gives the same firmware; to update, set a newer commit from
+# https://github.com/futureproofhomes/satellite1-esphome (needs ESPHome 2026.9+).
+# No secrets: the API key comes from Home Assistant and WiFi is stored on the device.
+
+substitutions:
+  name: satellite1
+  friendly_name: Satellite1
+  log_level: debug
+
+esphome:
+  name: ${name}
+  name_add_mac_suffix: true
+  friendly_name: ${friendly_name}
+
+packages:
+  FutureProofHomes.Satellite1:
+    url: &repo_url "https://github.com/futureproofhomes/satellite1-esphome"
+    ref: &repo_ref "46511ed57dae00f623bfc78aaac66c6619bc9d3b"
+    refresh: 1d
+    files:
+      - config/satellite1.base.yaml
+      - config/common/dashboard_build.yaml
+      - path: config/common/components.external.yaml
+        vars:
+          ext_comp_repo_url: *repo_url
+          ext_comp_repo_ref: *repo_ref
+
+logger:
+  level: ${log_level}
+
+# Added to upstream's wake words (Hey Jarvis, Okay Nabu). Pick them per slot in HA.
+micro_wake_word:
+  id: mww
+  models:
+    - model: https://raw.githubusercontent.com/scottbonline/mww/refs/heads/main/data/hey_klap.json
+      id: hey_klap
+    - model: alexa
+      id: alexa
