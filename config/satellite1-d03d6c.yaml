@@ -10,13 +10,15 @@
 # Builder, so HA, the Builder and the Mac can all connect. WiFi is stored on the device.
 
 substitutions:
-  name: satellite1
-  friendly_name: Satellite1
+  # The full name, not satellite1 + name_add_mac_suffix: same device name, and HA's
+  # ESPHome Builder can then track it.
+  name: satellite1-d03d6c
+  friendly_name: Satellite1 d03d6c
   log_level: debug
 
 esphome:
   name: ${name}
-  name_add_mac_suffix: true
+  name_add_mac_suffix: false
   friendly_name: ${friendly_name}
 
 packages:
