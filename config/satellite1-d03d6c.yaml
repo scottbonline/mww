@@ -6,7 +6,8 @@
 # Based on upstream's config/satellite1.dashboard.yaml. Pinned to a commit so a rebuild
 # gives the same firmware; to update, set a newer commit from
 # https://github.com/futureproofhomes/satellite1-esphome (needs ESPHome 2026.9+).
-# No secrets: the API key comes from Home Assistant and WiFi is stored on the device.
+# The API key comes from config/secrets.yaml (gitignored) - the same key as HA's ESPHome
+# Builder, so HA, the Builder and the Mac can all connect. WiFi is stored on the device.
 
 substitutions:
   name: satellite1
@@ -33,6 +34,10 @@ packages:
 
 logger:
   level: ${log_level}
+
+api:
+  encryption:
+    key: !secret satellite1_api_key
 
 # Added to upstream's wake words (Hey Jarvis, Okay Nabu). Pick them per slot in HA.
 micro_wake_word:
